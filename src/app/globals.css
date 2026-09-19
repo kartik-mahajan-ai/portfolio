@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ───────────────────────────────────────────────────────────
+   Design tokens
+   One accent across both themes; only the neutrals invert.
+   ─────────────────────────────────────────────────────────── */
+
+/*
+ * Light theme is a warm cream, not white — softer to read against and it
+ * carries the amber accent instead of fighting it. Neutrals are warm-toned
+ * (brown-black rather than blue-slate) so nothing reads cold.
+ * Every text colour here clears WCAG AA against --bg.
+ */
+:root {
+  --bg: #f4efe4;
+  --bg-elev: #faf6ec;
+  --surface: #faf7ef;
+  --surface-2: #ebe3d3;
+  --fg: #2a2520;
+  --fg-muted: #5c5346;
+  --fg-subtle: #74695a;
+  --border: rgba(42, 37, 32, 0.14);
+  --border-strong: rgba(42, 37, 32, 0.24);
+  --accent: #8f5a11;
+  --accent-fg: #fffaf0;
+  --accent-soft: rgba(143, 90, 17, 0.09);
+  --accent-ring: rgba(143, 90, 17, 0.35);
+  --grid-line: rgba(42, 37, 32, 0.05);
+  /* Doodle ink: soft warm graphite on cream — never pure black. */
+  --doodle: rgba(88, 78, 64, 0.42);
+}
+
+/*
+ * Dark theme is a warm charcoal-brown, not a cold near-black. Neutrals carry
+ * a little amber so the accent belongs to the palette rather than sitting on
+ * top of it. All text clears WCAG AA against --bg.
+ */
+.dark {
+  --bg: #14110e;
+  --bg-elev: #1c1813;
+  --surface: rgba(255, 245, 230, 0.032);
+  --surface-2: rgba(255, 245, 230, 0.062);
+  --fg: #f2ede4;
+  --fg-muted: #a89c8c;
+  --fg-subtle: #8a7f6f;
+  --border: rgba(255, 240, 220, 0.1);
+  --border-strong: rgba(255, 240, 220, 0.19);
+  --accent: #e8a552;
+  --accent-fg: #14110e;
+  --accent-soft: rgba(232, 165, 82, 0.13);
+  --accent-ring: rgba(232, 165, 82, 0.4);
+  --grid-line: rgba(255, 240, 220, 0.038);
+  /* Doodle ink: soft warm chalk on charcoal — never pure white. */
+  --doodle: rgba(240, 232, 218, 0.30);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elev: var(--bg-elev);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-doodle: var(--doodle);
+
+  --font-heading: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-serif: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+}
+
+/* ───────────────────────────────────────────────────────────
+   Base
+   ─────────────────────────────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
+  /*
+   * Only offsets by the fixed mobile header. On desktop the nav is a side
+   * rail, so a jumped-to section lands flush with the top of the viewport —
+   * otherwise the tail of the previous section stays visible above it.
+   */
+  scroll-padding-top: 4rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (min-width: 1024px) {
+  html { scroll-padding-top: 0; }
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body), sans-serif;
+  font-feature-settings: "kern", "liga";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), sans-serif;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+/* Visible keyboard focus everywhere, without showing rings on mouse clicks. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ───────────────────────────────────────────────────────────
+   Scrollbar — follows the theme instead of being hardcoded black
+   ─────────────────────────────────────────────────────────── */
+
+@supports (scrollbar-color: auto) {
+  html {
+    scrollbar-color: var(--border-strong) transparent;
+    scrollbar-width: thin;
+  }
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 99px;
+  border: 3px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ───────────────────────────────────────────────────────────
+   Utilities
+   ─────────────────────────────────────────────────────────── */
+
+@utility grid-bg {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+@utility card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(135deg, var(--fg) 30%, var(--accent) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* ───────────────────────────────────────────────────────────
+   Motion
+   ─────────────────────────────────────────────────────────── */
+
+/*
+ * Ambient aurora. Three blobs drift on slightly different periods so the
+ * composite never visibly repeats. Only `transform` animates, so this stays
+ * on the compositor and costs no layout or paint.
+ */
+@keyframes drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33%      { transform: translate3d(7vw, -5vh, 0) scale(1.12); }
+  66%      { transform: translate3d(-5vw, 6vh, 0) scale(0.94); }
+}
+
+@keyframes drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
+  40%      { transform: translate3d(-8vw, 7vh, 0) scale(0.9); }
+  70%      { transform: translate3d(5vw, -4vh, 0) scale(1.15); }
+}
+
+@keyframes drift-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(0.95); }
+  50%      { transform: translate3d(6vw, 8vh, 0) scale(1.2); }
+}
+
+.aurora-a { animation: drift-a 34s ease-in-out infinite; }
+.aurora-b { animation: drift-b 42s ease-in-out infinite; }
+.aurora-c { animation: drift-c 38s ease-in-out infinite; }
+
+/* Respect the OS setting. Nothing below animates if the user opted out. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Keeps the flowing background pattern away from the reading column: fully
+ * transparent through the centre, ramping to full strength at the edges.
+ */
+@utility flow-mask {
+  -webkit-mask-image: radial-gradient(
+    ellipse 72% 62% at 50% 46%,
+    transparent 32%,
+    rgba(0, 0, 0, 0.38) 66%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 72% 62% at 50% 46%,
+    transparent 32%,
+    rgba(0, 0, 0, 0.38) 66%,
+    #000 100%
+  );
+}
